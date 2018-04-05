@@ -1,0 +1,121 @@
+---
+title: "Untitled"
+author: "Anurag Joshi,Rishab Nagaraj, Ronak Shah, Vivek Vikram Magadi"
+date: "April 4, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Libraries
+
+
+```{r }
+library(data.table)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+
+```
+
+## Reading the Dataset
+Look at the structure of the dataset. Read in strings as factors. 
+
+```{r echo=FALSE}
+homicide <- fread("database.csv",stringsAsFactors = T)
+str(homicide)
+```
+Step 2: Shall consider Crime solved as the response data. Find relationships of crime solved with respect to the other variables.
+Describing a function to plot the ratio of crime solved of varying factor levels for a given variable.
+```{r}
+ratio_solved <- function(var){
+x <- data.frame(table(var,homicide$`Crime Solved`))
+x <- spread(x,key=Var2,value = Freq)
+#Create a total count for every factor level
+x$total <- x$Yes + x$No
+
+name <- as.character(deparse(substitute(var)))
+name <- substr(name,10,nchar(name))
+#Yes Ratio
+x$yes_ratio <- x$Yes/x$total
+#No Ratio
+x$no_ratio <- x$No/x$total
+
+
+#Plot that shows us the ratio of crimes solved factored on every level
+ggplot(x,aes(yes_ratio,var))  + geom_line(aes(group=1)) + geom_text(aes(label=x$Yes)) + ggtitle(paste("Crime Solved Ratio of",name,"Variable")) + scale_x_continuous(name = "Crime Solved Ratio") + scale_y_discrete(name=name)
+}
+
+
+```
+
+Check the plots for every variable(categorical).
+The below plots must be read keeping in mind that the Factor variable is present on the Y axis. The factor variable with the most extreme crime solved ratio is present towards the right end of the graph, similarly the factor variable with the least crime solved ratio is present towards the left end of the graph. The numbers on the graph signify the count of the crimes solved with respect to the particular factor level.
+
+Variable 1 : Weapon
+```{r}
+ratio_solved(homicide$Weapon)
+```
+Analyses:
+
+
+Variable 2: Agency Type
+```{r}
+ratio_solved(homicide$`Agency Type`)
+
+```
+Analyses:
+
+
+
+Variable 3: State
+```{r}
+ratio_solved(homicide$State)
+```
+
+```{r}
+ratio_solved(homicide$Month)
+```
+
+```{r}
+ratio_solved(homicide$`Crime Type`)
+```
+
+```{r}
+ratio_solved(homicide$`Victim Sex`)
+```
+
+```{r}
+ratio_solved(homicide$`Victim Count`)
+```
+
+```{r}
+ratio_solved(homicide$`Victim Race`)
+```
+
+```{r}
+ratio_solved(homicide$`Perpetrator Sex`)
+```
+
+```{r}
+ratio_solved(homicide$`Perpetrator Race`)
+```
+
+```{r}
+ratio_solved(homicide$`Perpetrator Count`)
+```
+
+```{r}
+ratio_solved(homicide$Relationship)
+```
+
+```{r}
+ratio_solved(homicide$`Record Source`)
+```
+
+```{r}
+
+```
+
